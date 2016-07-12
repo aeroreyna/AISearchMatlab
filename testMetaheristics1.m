@@ -1,7 +1,7 @@
 clear, clc
-AISearch = PSO(@schwefel,2);
-AISearch.sizePopulation = 30;
-AISearch.maxNoIterations = 100;
+AISearch = CS(@schwefel,10);
+AISearch.sizePopulation = 70;
+AISearch.maxNoIterations = 1000;
 
 AISearch.start()
 AISearch.bestSolution

@@ -9,7 +9,7 @@ classdef metaheuristic < handle
         population = [];            %size = (sizePop, NoDim)
         fitness = [];               %size = (sizePop, 1)
         bestSolution = [];
-        bestFitness = [];
+        bestFitness = inf;
         fitnessFunction;
         numberOfFunctionCalls = 0;
         maxNoIterations = 100;
@@ -50,6 +50,8 @@ classdef metaheuristic < handle
             
             obj.historicBestSolution = zeros(obj.maxNoIterations, obj.noDimensions);
             obj.historicBestFitness = zeros(obj.maxNoIterations, 1);
+            obj.updateBest();
+            
             for i=1:obj.maxNoIterations
                 obj.operators();
                 obj.updateBest();
@@ -83,7 +85,7 @@ classdef metaheuristic < handle
             if nargin == 1
                 population = obj.population;
             end
-            fit = zeros(1,size(population,1));
+            fit = zeros(size(population,1),1);
             for i=1:size(population,1)
                 fit(i) = obj.fitnessFunction(population(i,:));
             end
@@ -107,6 +109,10 @@ classdef metaheuristic < handle
                 obj.bestSolution = obj.population(bestIndex,:);
                 obj.bestFitness = bestFitTemp;
             end
+        end
+        
+        function plot(obj)
+            plot(obj.historicBestFitness);
         end
     end
     

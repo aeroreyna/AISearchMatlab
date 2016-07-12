@@ -96,7 +96,7 @@ classdef metaheuristic < handle
             end
         end
         
-        function sortPopulatin(obj)
+        function sortPopulation(obj)
             % Sort the population using the fitness value, the order is
             % assendent. Sort the fitness array as well.
             temp = sortrows([obj.fitness, obj.population], 1);

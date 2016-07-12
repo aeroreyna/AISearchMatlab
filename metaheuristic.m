@@ -15,6 +15,7 @@ classdef metaheuristic < handle
         fitnessFunction;
         numberOfFunctionCalls = 0;
         maxNoIterations = 100;
+        actualIteration = 0;
     end
     
     %this properties are for data visualization
@@ -55,6 +56,7 @@ classdef metaheuristic < handle
             obj.updateBest();
             
             for i=1:obj.maxNoIterations
+                obj.actualIteration = i;
                 obj.operators();
                 obj.updateBest();
                 obj.historicBestSolution(i,:) = obj.bestSolution;

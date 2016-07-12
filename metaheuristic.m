@@ -2,6 +2,8 @@ classdef metaheuristic < handle
     %METAHEURISTIC by aeroreyna, made with <3 & science
     %   Detailed explanation goes here
     % always goes to minimization
+    % consider that all the variables have a range [0-1], adjustments of
+    % this has to be done in the fitness function.
     
     properties
         sizePopulation = 30;
@@ -113,6 +115,17 @@ classdef metaheuristic < handle
         
         function plot(obj)
             plot(obj.historicBestFitness);
+        end
+        
+        function solutions = checkBounds(obj, solutions)
+            if nargin == 1
+                solutions = obj.population;
+            end
+            solutions(solutions>1)=1;
+            solutions(solutions<0)=0;
+            if nargin == 1
+                obj.population = solutions;
+            end
         end
     end
     

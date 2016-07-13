@@ -27,7 +27,7 @@ classdef GA < combinatorialSolver
             for i = 1:floor(obj.sizePopulation/2)
                 parent1 = obj.population(parents((i-1)*2+1),:);
                 parent2 = obj.population(parents((i-1)*2+2),:);
-                [child1, child2] = crossover(obj, parent1, parent2);
+                [child1, child2] = crossoverRandi(obj, parent1, parent2);
                 newPop((i-1)*2+1,:) = child1;
                 newPop((i-1)*2+2,:) = child2;
             end
@@ -36,7 +36,7 @@ classdef GA < combinatorialSolver
             for i = 1:floor(obj.sizePopulation/2)
                 for j = 1:obj.noDimensions
                     if rand < obj.mutationRate
-                        newPop(i,j) = abs(newPop(i,j)-1);
+                        newPop(i,j) = randi(obj.rangePerDimension);
                     end
                 end
             end
@@ -62,6 +62,18 @@ classdef GA < combinatorialSolver
                 crosI = randi(obj.noDimensions-2)+1;
                 child1 = [parent1(1:crosI), parent2(crosI+1:end)];
                 child2 = [parent2(1:crosI), parent1(crosI+1:end)];
+            else
+                child1 = parent1;
+                child2 = parent2;
+            end
+        end
+        function [child1, child2] = crossoverRandi(obj, parent1, parent2)
+            if rand < obj.crossoverRate
+                 temp = randi([0,1],1,obj.noDimensions)==1;
+                 child1 = parent1;
+                 child1(temp) = parent2(temp);
+                 child2 = parent2;
+                 child2(temp) = parent1(temp);
             else
                 child1 = parent1;
                 child2 = parent2;

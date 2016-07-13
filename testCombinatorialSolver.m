@@ -1,5 +1,5 @@
 clear, clc
-NoItems = 100;
+NoItems = 30;
 k = knapsack(NoItems,50,70);
 AISearch = GA(@k.fitness,NoItems);
 AISearch.sizePopulation = 30;

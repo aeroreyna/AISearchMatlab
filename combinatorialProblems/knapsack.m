@@ -35,6 +35,7 @@ classdef knapsack < handle
             p = sum(obj.prices(x));
             w = sum(obj.weights(x));
         end
+        
     end
     
 end

@@ -62,7 +62,6 @@ classdef SMS < metaheuristic
                 end
             end
             
-            %ajuste de parametros
             if (1 - obj.actualIteration/obj.maxNoIterations)<obj.phases(obj.phase)
                 obj.phase = obj.phase+1;
             end

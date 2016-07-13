@@ -4,6 +4,7 @@ classdef combinatorialSolver < metaheuristic
     
     properties
         bitsPerDimension = 2;
+        rangePerDimension = [0, 1];
     end
     
     methods
@@ -21,7 +22,7 @@ classdef combinatorialSolver < metaheuristic
                 obj.sizePopulation = sizePopulation;
                 obj.noDimensions = noDimensions;
             end
-            obj.population = randi(obj.bitsPerDimension, sizePopulation, noDimensions)-1;
+            obj.population = randi(obj.rangePerDimension, sizePopulation, noDimensions);
         end
     end
     

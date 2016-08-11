@@ -1,9 +1,9 @@
 clear, clc
-AISearch = DE(@Rastrigin,30);
-AISearch.sizePopulation = 500;
-AISearch.maxNoIterations = 1000;
+AISearch = MSMS(@Rastrigin,2);
+AISearch.sizePopulation = 50;
+AISearch.maxNoIterations = 100;
 %AISearch.graph2d();
-AISearch.plotEachIterationB = false;
+AISearch.plotEachIterationB = true;
 AISearch.plotHistoricB = false;
 AISearch.plotPopulationB = true;
 AISearch.plotBestSolutionB = true;

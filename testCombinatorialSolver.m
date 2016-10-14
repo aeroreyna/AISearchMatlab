@@ -1,9 +1,11 @@
 clear, clc
-NoItems = 30;
-k = knapsack(NoItems,50,70);
+NoItems = 300;
+range = 50;
+maxW = range / 10 * NoItems ;
+k = knapsack(NoItems,range,maxW);
 AISearch = GA(@k.fitness,NoItems);
-AISearch.sizePopulation = 50;
-AISearch.maxNoIterations = 100;
+AISearch.sizePopulation = 100;
+AISearch.maxNoIterations = 500;
 
 AISearch.start()
 AISearch.bestSolution

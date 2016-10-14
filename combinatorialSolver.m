@@ -23,6 +23,12 @@ classdef combinatorialSolver < metaheuristic
                 obj.noDimensions = noDimensions;
             end
             obj.population = randi(obj.rangePerDimension, sizePopulation, noDimensions);
+            if size(obj.initialSolutions,1) ~= 0
+                if size(obj.initialSolutions,2) ~= obj.noDimensions || size(obj.initialSolutions,1) > obj.sizePopulation
+                    error('Initial custom population do not have the right dimensions');
+                end
+                obj.population(1:size(obj.initialSolutions,1),:) = obj.initialSolutions;
+            end
         end
     end
     

@@ -17,6 +17,7 @@ classdef metaheuristic < handle
         numberOfFunctionCalls = 0;
         maxNoIterations = 100;
         actualIteration = 0;
+        initialSolutions = [];
     end
     
     %this properties are for data visualization
@@ -34,6 +35,8 @@ classdef metaheuristic < handle
         Z;                          %Stores the plot data Z
         handleHistoricPlot;
         handlePopulationPlot;
+        improvementsCount = 0;
+        bestSolutionChanges = 0;
     end
     
     methods (Abstract)
@@ -47,6 +50,7 @@ classdef metaheuristic < handle
             end
             obj.fitnessFunction = fitnessFunction;
             obj.noDimensions = noDimensions;
+            obj.numberOfFunctionCalls=0;
         end
         
         function start(obj)
@@ -72,6 +76,7 @@ classdef metaheuristic < handle
                 obj.historicBestSolution(i,:) = obj.bestSolution;
                 obj.historicBestFitness(i,:) = obj.bestFitness;
                 %data visualization
+                %disp(i)
                 if obj.plotEachIterationB == true
                     if size(obj.customPlotFunction,1)~=0
                         obj.customPlotFunction(obj);
@@ -100,6 +105,12 @@ classdef metaheuristic < handle
                 obj.noDimensions = noDimensions;
             end
             obj.population = rand(sizePopulation, noDimensions);
+            if size(obj.initialSolutions,1) ~= 0
+                if size(obj.initialSolutions,2) ~= obj.noDimensions || size(obj.initialSolutions,1) > obj.sizePopulation
+                    error('Initial custom population do not have the right dimensions');
+                end
+                obj.population(1:size(obj.initialSolutions,1),:) = obj.initialSolutions;
+            end
         end
         
         function fit = evalPopulation(obj, population)
@@ -117,6 +128,7 @@ classdef metaheuristic < handle
             if nargin == 1
                 obj.fitness = fit;
             end
+            obj.numberOfFunctionCalls=obj.numberOfFunctionCalls+size(population,1);
         end
         
         function sortPopulation(obj)
@@ -126,6 +138,17 @@ classdef metaheuristic < handle
             obj.fitness = temp(:,1);
             obj.population = temp(:,2:end);
         end
+                
+        function solutions = checkBounds(obj, solutions)
+            if nargin == 1
+                solutions = obj.population;
+            end
+            solutions(solutions>1)=1;
+            solutions(solutions<0)=0;
+            if nargin == 1
+                obj.population = solutions;
+            end
+        end
         
         function updateBest(obj)
             % update the best know so far solution and it's fitness.
@@ -133,6 +156,7 @@ classdef metaheuristic < handle
             if bestFitTemp < obj.bestFitness
                 obj.bestSolution = obj.population(bestIndex,:);
                 obj.bestFitness = bestFitTemp;
+                obj.bestSolutionChanges = obj.bestSolutionChanges + 1;
             end
         end
         function updateWorst(obj)
@@ -141,6 +165,21 @@ classdef metaheuristic < handle
             if worstFitTemp > obj.worstFitness
                 obj.worstFitness = worstFitTemp;
             end
+        end
+        
+        function r = diversity(obj, solutions)
+            %Function that messure the diversity of the population.
+            if nargin == 1
+                solutions = obj.population;
+            end
+            n = size(solutions,1);
+            r = 0;
+            for i = 1:n-1
+                for j = i+1:n
+                    r = r + norm(solutions(i,:)-solutions(j,:));
+                end
+            end
+            r = 2 * r / (n*(n-1));
         end
         
         function plot(obj)
@@ -183,14 +222,12 @@ classdef metaheuristic < handle
             if nargin == 2
                 properties='ob';
             end
-            for i=1:size(solutions,1)
-                plot(solutions(i,1),solutions(i,2),properties);
-            end
+            plot(solutions(:,1),solutions(:,2),properties);
         end
         
         function [X,Y,Z] = getGraphData(obj, fitnessFunc)
             if size(obj.X,1) == 0 || size(obj.Y,1) == 0 || size(obj.Z,1) == 0
-                x=0:1/50:1;
+                x=0:1/100:1;
                 y=x;
                 [X,Y]=meshgrid(x,y);
                 [row,col]=size(X);
@@ -229,19 +266,17 @@ classdef metaheuristic < handle
                 fitnessFunc = obj.fitnessFunction;
             end
             [x,y,z] = obj.getGraphData(fitnessFunc);
-            contour(x,y,z,5);
+            contour(x,y,z,4);
         end
         
-        function solutions = checkBounds(obj, solutions)
-            if nargin == 1
-                solutions = obj.population;
-            end
-            solutions(solutions>1)=1;
-            solutions(solutions<0)=0;
-            if nargin == 1
-                obj.population = solutions;
-            end
+        function plotHistoricSolutions(obj)
+            figure
+            obj.graph2d();
+            hold on;
+            obj.plotSolutions(obj.historicBestSolution)
+            obj.plotSolutions(obj.historicBestSolution, '')
         end
+
     end
     
 end

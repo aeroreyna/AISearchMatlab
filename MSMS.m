@@ -22,6 +22,7 @@ classdef MSMS < metaheuristic
             end
             obj.fitnessFunction = fitnessFunction;
             obj.noDimensions = noDimensions;
+            obj.maxMemory = 50;
         end
         function operators(obj)
             if size(obj.direction)==0
@@ -38,16 +39,16 @@ classdef MSMS < metaheuristic
             a = zeros(size(obj.population,1),obj.noDimensions);
             for i = 1:obj.sizePopulation
                 [ii, b] = obj.closestMemory(pobL(i,:));
-                a(i,:) = (obj.memory(ii,1:end-1)-pobL(i,:))./b;
+                a(i,:) = (obj.memory(ii,1:end-1)-pobL(i,:))./(b+eps);
             end
             dirL = dirL * (1 - obj.actualIteration/obj.maxNoIterations)*0.5 + a;
                         
-            %colition
+            %colition (Not nessesary, work better without it
             r = 1 * obj.alpha(obj.phase);
             for i = 1:obj.sizePopulation-1
                 for j = i+1:obj.sizePopulation
-                    rr = norm(pobL(i,:)-pobL(j,:));
-                    if rr < r
+                    rr = sum((pobL(i,:)-pobL(j,:)).^2);
+                    if rr < r^2
                         c = dirL(i,:);
                         d = dirL(j,:);
                         dirL(i,:)=d;
@@ -68,28 +69,32 @@ classdef MSMS < metaheuristic
                 end
             end
             
+            %obj.population = pobL;
+            pobL = obj.checkBounds(pobL);
+            %tempF = obj.evalPopulation(pobL);
+            %tempFB = tempF < obj.fitness;
+            %obj.population(tempFB,:) = pobL(tempFB,:);
+            %obj.fitness(tempFB) = tempF(tempFB);
             obj.population = pobL;
-            obj.checkBounds();
-            obj.direction = dirL;
             obj.evalPopulation();
+            obj.direction = dirL;
             obj.updateMemory();
             
             %parameters adjusment
             if (1 - obj.actualIteration/obj.maxNoIterations)<obj.phases(obj.phase)
                 obj.phase = obj.phase+1;
                 obj.cleanMemory();
-                if size(obj.memory,1) >= obj.sizePopulation
-                    obj.population(1:end,:) = obj.memory(1:obj.sizePopulation,1:end-1)+rand(obj.sizePopulation,obj.noDimensions)/100;
-                else
-                    obj.population(1:size(obj.memory,1),:) = obj.memory(:,1:end-1)+rand(size(obj.memory,1),obj.noDimensions)/100;
+                for i=1:obj.sizePopulation
+                    m = size(obj.memory,1);
+                    obj.population(i,:) = obj.memory(randi(m),1:end-1);
                 end
             end
         end
         
         function [index, distance] = closestMemory(obj, solution)
-            m = size(obj.memory,1);
-            [distance, index] = min(sum((repmat(solution,m,1)-obj.memory(:,1:end-1)).^2,2));
-            distance = sqrt(distance);
+            solution = repmat(solution, size(obj.memory,1), 1);
+            [distance, index] = min(sum((solution - obj.memory(:,1:end-1)).^2,2));
+            distance = sqrt(distance)/sqrt(obj.noDimensions);
         end
         
         function updateMemory(obj)
@@ -130,9 +135,16 @@ classdef MSMS < metaheuristic
                 end
             end
             
+            
+            
             %checkMemorySize
             if obj.maxMemory < size(obj.memory,1)
+%                 obj.phase = obj.phase+1;
                 obj.cleanMemory();
+%                 for i=1:obj.sizePopulation
+%                     m = size(obj.memory,1);
+%                     obj.population(i,:) = obj.memory(randi(m),1:end-1);
+%                 end
             end
         end
         
@@ -140,26 +152,37 @@ classdef MSMS < metaheuristic
             %Clean memory from repetition
             %This method is used only few times, so efficiency is not such
             %a problem.
+            disp('cleaning memory')
+            %Sort memory
             obj.memory = sortrows(obj.memory,obj.noDimensions+1);
             [m,n] = size(obj.memory);
             MemL = obj.memory(:,1:end-1);
             rdp = zeros(m,m);
+            obj.rdppi = zeros(1,m);
+            %find the clean radio of each entry in the memory
             for i=1:m
                 for j=1:m
                     if i~= j
+                        %eval all the distances between them
                         rdp(i,j) = norm(MemL(i,:)-MemL(j,:));
                     end
                 end
+                %sort by distance
                 [~,jj] = sort(rdp(i,:));
                 for j=1:m
                     temp = obj.fitnessFunction(MemL(i,:)+(MemL(jj(j),:)-MemL(i,:))*0.5);
                     obj.numberOfFunctionCalls = obj.numberOfFunctionCalls + 1;
                     if temp > max([obj.memory(jj(j),end),obj.memory(i,end)])
+                        %the point between them has worst fitness, set the
+                        %radio of that entry a percent of distance.
                         obj.rdppi(i) = rdp(i,jj(j))*0.85;
                         break
                     end
                 end
             end
+            %Clean the unwanted information.
+            %this could be done with the first cicle, so innesary
+            %evaluations could be ommited.
             cTemp=0;
             badInd = zeros(m,1);
             for i=1:m

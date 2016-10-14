@@ -1,7 +1,7 @@
 clear, clc
-AISearch = DE(@Rastrigin,30);
-AISearch.sizePopulation = 500;
-AISearch.maxNoIterations = 1000;
+AISearch = DE(@schwefel,2);
+AISearch.sizePopulation = 30;
+AISearch.maxNoIterations = 100;
 %AISearch.graph2d();
 AISearch.plotEachIterationB = false;
 AISearch.plotHistoricB = false;
@@ -12,3 +12,5 @@ AISearch.start()
 AISearch.bestSolution
 AISearch.bestFitness
 AISearch.plot()
+AISearch.plotHistoricSolutions()
+AISearch

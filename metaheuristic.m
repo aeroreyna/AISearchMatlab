@@ -36,7 +36,8 @@ classdef metaheuristic < handle
         handleHistoricPlot;
         handlePopulationPlot;
         improvementsCount = 0;
-        bestSolutionChanges = 0;
+        bestSolutionChanges = 0;    %No of improvements 
+        bestSolutionImprovers = [];  %Record of improvers
     end
     
     methods (Abstract)
@@ -157,6 +158,7 @@ classdef metaheuristic < handle
                 obj.bestSolution = obj.population(bestIndex,:);
                 obj.bestFitness = bestFitTemp;
                 obj.bestSolutionChanges = obj.bestSolutionChanges + 1;
+                obj.bestSolutionImprovers = [obj.bestSolutionImprovers; obj.bestSolution];
             end
         end
         function updateWorst(obj)

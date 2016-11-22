@@ -51,7 +51,7 @@ classdef GA < combinatorialSolver
         end
         function index = tournament(obj)
             temp = randi(obj.sizePopulation,1,2);
-            if obj.fitness(temp(1))<obj.fitness(temp(2))
+            if obj.fitness(temp(1)) < obj.fitness(temp(2))
                 index = temp(1);
             else
                 index = temp(2);

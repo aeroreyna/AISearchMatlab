@@ -191,7 +191,7 @@ classdef metaheuristic < handle
                 end
                 figure(obj.handleHistoricPlot.Number);
                 hold off
-                plot(obj.historicBestFitness);
+                plot(1:obj.actualIteration, obj.historicBestFitness(1:obj.actualIteration));
             end
             if obj.plotPopulationB == true
                 if size(obj.handlePopulationPlot,1) == 0

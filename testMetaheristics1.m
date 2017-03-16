@@ -1,16 +1,16 @@
 clear, clc
-AISearch = DE(@schwefel,2);
-AISearch.sizePopulation = 30;
-AISearch.maxNoIterations = 100;
+AISearch = WOA(@schwefel,50);
+AISearch.sizePopulation = 300;
+AISearch.maxNoIterations = 1000;
 %AISearch.graph2d();
 AISearch.plotEachIterationB = false;
-AISearch.plotHistoricB = false;
-AISearch.plotPopulationB = true;
-AISearch.plotBestSolutionB = true;
+AISearch.plotHistoricB = true;
+AISearch.plotPopulationB = false;
+AISearch.plotBestSolutionB = false;
 
 AISearch.start()
 AISearch.bestSolution
 AISearch.bestFitness
 AISearch.plot()
-AISearch.plotHistoricSolutions()
-AISearch
+%AISearch.plotHistoricSolutions()
+%AISearch

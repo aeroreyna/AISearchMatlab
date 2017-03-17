@@ -8,6 +8,7 @@ classdef CS < metaheuristic
     
     methods
         function obj = CS(fitnessFunction, noDimensions)
+            obj.algorithmName = 'CS';
             if nargin < 1
                 return 
             end

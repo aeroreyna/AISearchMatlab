@@ -12,6 +12,7 @@ classdef DE < metaheuristic
     
     methods
         function obj = DE(fitnessFunction, noDimensions)
+            obj.algorithmName = 'DE';
             if nargin < 1
                 return 
             end

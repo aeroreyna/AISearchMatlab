@@ -7,6 +7,7 @@ classdef WOA < metaheuristic
     
     methods
         function obj = WOA(fitnessFunction, noDimensions)
+            obj.algorithmName = 'WOA';
             if nargin < 1
                 return 
             end

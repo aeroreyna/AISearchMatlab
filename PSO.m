@@ -16,6 +16,7 @@ classdef PSO < metaheuristic
     
     methods
         function obj = PSO(fitnessFunction, noDimensions)
+            obj.algorithmName = 'PSO';
             if nargin < 1
                 return 
             end

@@ -14,6 +14,7 @@ classdef SMS < metaheuristic
     
     methods
         function obj = SMS(fitnessFunction, noDimensions)
+            obj.algorithmName = 'SMS';
             if nargin < 1
                 return 
             end

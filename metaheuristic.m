@@ -38,6 +38,12 @@ classdef metaheuristic < handle
         improvementsCount = 0;
         bestSolutionChanges = 0;    %No of improvements 
         bestSolutionImprovers = [];  %Record of improvers
+        saveRecordOnline = false;
+        algorithmName = 'Unregistered';
+    end
+    
+    properties (Access = private)
+        onlineObj = 0
     end
     
     methods (Abstract)
@@ -88,6 +94,9 @@ classdef metaheuristic < handle
                 if size(obj.eachIterationFunction,1)~=0
                     obj.eachIterationFunction(obj);
                 end
+            end
+            if obj.saveRecordOnline
+                obj.uploadRecord();
             end
         end
         
@@ -279,6 +288,27 @@ classdef metaheuristic < handle
             obj.plotSolutions(obj.historicBestSolution, '')
         end
 
+    end
+    
+    methods (Access = private)
+        function logIn(obj, user , key)
+            if obj.onlineObj == 0
+                obj.onlineObj = onlineRecords();
+                obj.logIn(user , key);
+            end
+        end
+        function uploadRecord(obj)
+            if obj.onlineObj == 0
+                obj.onlineObj = onlineRecords();
+            end
+            if obj.onlineObj.logged
+                tempF = functions(obj.fitnessFunction);
+                obj.onlineObj.addRecord(obj.algorithmName, tempF.function, obj.bestFitness, ...
+                obj.bestSolution, obj.noDimensions, obj.maxNoIterations, obj.sizePopulation);
+            else
+               warn 'You are not logged in';
+            end            
+        end
     end
     
 end

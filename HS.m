@@ -10,6 +10,7 @@ classdef HS < metaheuristic
     
     methods
         function obj = HS(fitnessFunction, noDimensions)
+            obj.algorithmName = 'HS';
             if nargin < 1
                 return 
             end

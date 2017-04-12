@@ -1,5 +1,6 @@
 clear, clc
-
+benchmarkF = {@ackley, @branins, @griewangk, @jongs, @langermann, @michalewicz, @rastrigin, @rosenbrock, @rysunek, schwefel};
+AIs = {@DE, @PSO, @SMS, @WOA, @CS,  @HS
 
 for i=1:30
 AISearch = HS(@rastrigin,30);

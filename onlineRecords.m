@@ -3,55 +3,52 @@ classdef onlineRecords < handle
     %   Detailed explanation goes here
     
     properties
-        user = '';
-        logged = false;
+        
     end
     
     properties (Access = private)
+        logged = false;
         key = '';
-        api = 'https://api.mlab.com/api/1/databases/metaheuristics/';
-        apiKey = '&apiKey=POsU-OzCAPo67RrFszoJvg85MVuUU0Ji';
-        logApi = 'collections/usersApi?q={"user":"'
+        api = 'https://metaheuristicsapi.herokuapp.com/';
+        apiKey = '&apikey=';
+        logApi = 'users/'
     end
     
     methods
         function obj = onlineRecords()
-            if exist('setting.mat', 'file') == 2
-                load('setting.mat');
-                if size(user,1) ~= 0
-                    obj.logIn(user, key)
-                end
+            if(strcmp(getenv('METAAPIKEY'),'') ~= 1)
+                obj.logIn(getenv('METAAPIKEY'))
             end
         end
-        function logIn(obj, user, key)
-            userInfo = webread([obj.api obj.logApi user '"}' obj.apiKey]);
-            if(strcmp(key, userInfo.key))
-                obj.user = user;
-                obj.key = key;
+        function logIn(obj, apiKey)
+            apiKey = [obj.apiKey apiKey];
+            result = webread([obj.api obj.logApi '?'  apiKey]);
+            if(strcmp(result, 'ok'))
+                obj.apiKey = apiKey;
                 obj.logged = true;
-                save('setting.mat', 'user', 'key')
             else
                 warn 'Wrong user information, try to load again.'
             end
         end
         function logOut(obj)
-            user = '';
-            key = '';
-            save('setting.mat', 'user', 'key');
-            logged = false;
-            obj.user = user;
-            obj.key = key;
+            obj.logged = false;
+            obj.apiKey = '&apikey=';
         end
-        function addRecord(obj, algorithm, benchmark, bestFitness, bestSolution, dimensions, iterations, populationSize)
-            %date
-            %user
-            dateStr = datestr(datetime('now'));
-            url = [obj.api 'collections/records/?' obj.apiKey];
-            options = weboptions('RequestMethod', 'post', 'MediaType','application/json');
-            data = struct('user', obj.user, 'algorithm', algorithm, 'benchmark', ...
-                benchmark, 'bestFitness', bestFitness, 'bestSolution', bestSolution, ...
-                'dimensions', dimensions, 'iterations', iterations, 'populationSize', populationSize, 'date', dateStr);
-            r = webwrite(url, data, options);
+        function r = isLogIn(obj)
+            r = obj.logged;
+        end
+        function r = addRecord(obj, algorithm, benchmark, bestFitness, bestSolution, dimensions, iterations, populationSize)
+            if(obj.logged)
+                dateStr = datestr(datetime('now'));
+                url = [obj.api 'records/?' obj.apiKey];
+                options = weboptions('RequestMethod', 'post', 'MediaType','application/json');
+                data = struct('user', obj.user, 'algorithm', algorithm, 'benchmark', ...
+                    benchmark, 'bestFitness', bestFitness, 'bestSolution', bestSolution, ...
+                    'dimensions', dimensions, 'iterations', iterations, 'populationSize', populationSize, 'date', dateStr);
+                r = webwrite(url, data, options);
+            else
+                warn 'Wrong user information, try to load again.'
+            end
         end
     end
     

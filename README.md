@@ -1,11 +1,11 @@
 # AISearchMatlab
 AISearch Library for Matlab
 
-This is a open source toolbox to **implement**, **test**, **learn** and **compare** metaheuristic algorithms. 
+This is a open source toolbox to **implement**, **test**, **learn** and **compare** metaheuristic algorithms.
 
 The main idea of this toolbox is to accelerate the learning curve for this algorithms, by offering a clean and reusable code. We would like that this toolbox is accesible to new applications even for people with low or none knowlage of this techniques.
 
-## Instalation 
+## Instalation
 
 1. Download this git. [Link](https://github.com/aeroreyna/AISearchMatlab/archive/master.zip)
 2. Unzip the folder.
@@ -29,7 +29,7 @@ So far this is the list of metaheuristic algorithms to implement:
 - [ ] Firefly Algorithm (FA)
 - [ ] Social Spider Optimization (SSO)
 
-An extensive list of this algorithms can be found at this blog: [TheScienceMatrix](http://thesciencematrix.com/Apps/metaheuristics/)
+An extensive list of this algorithms can be found at this Github Page: [AISearch](https://aisearch.github.io/#/)
 
 ## Usage
 
@@ -46,5 +46,3 @@ anyVariableName.bestFitness
 ## Examples
 
 The examples provided are easily configurable to use the algorithm of your choice. Feel free to test them out, and change them as will. We highly recomend to inspect the code of them to understand better their ways.
-
-

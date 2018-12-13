@@ -9,6 +9,7 @@ classdef GA < combinatorialSolver
     
     methods
         function obj = GA(fitnessFunction, noDimensions)
+            obj.algorithmName = 'GA';
             if nargin < 1
                 return 
             end

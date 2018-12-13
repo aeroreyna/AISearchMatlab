@@ -10,7 +10,7 @@ classdef onlineRecords < handle
         logged = false;
         key = '';
         api = 'https://metaheuristicsapi.herokuapp.com/';
-        apiKey = '&apikey=';
+        apiKey = '&apiKey=';
         logApi = 'users/'
     end
     
@@ -21,18 +21,19 @@ classdef onlineRecords < handle
             end
         end
         function logIn(obj, apiKey)
-            apiKey = [obj.apiKey apiKey];
-            result = webread([obj.api obj.logApi '?'  apiKey]);
+            apiKeyStr = [obj.apiKey apiKey];
+            result = webread([obj.api obj.logApi '?'  apiKeyStr]);
             if(strcmp(result, 'ok'))
-                obj.apiKey = apiKey;
+                obj.apiKey = apiKeyStr;
                 obj.logged = true;
+                setenv('METAAPIKEY', apiKey);
             else
-                warn 'Wrong user information, try to load again.'
+                warning('Wrong user information, try to load again.');
             end
         end
         function logOut(obj)
             obj.logged = false;
-            obj.apiKey = '&apikey=';
+            obj.apiKey = '&apiKey=';
         end
         function r = isLogIn(obj)
             r = obj.logged;
@@ -42,12 +43,17 @@ classdef onlineRecords < handle
                 dateStr = datestr(datetime('now'));
                 url = [obj.api 'records/?' obj.apiKey];
                 options = weboptions('RequestMethod', 'post', 'MediaType','application/json');
-                data = struct('user', obj.user, 'algorithm', algorithm, 'benchmark', ...
+                data = struct('algorithm', algorithm, 'benchmark', ...
                     benchmark, 'bestFitness', bestFitness, 'bestSolution', bestSolution, ...
                     'dimensions', dimensions, 'iterations', iterations, 'populationSize', populationSize, 'date', dateStr);
-                r = webwrite(url, data, options);
+                try
+                    r = webwrite(url, data, options);
+                catch ME
+                    ME
+                    warning('Fallo la comunicación con el servidor.');
+                end
             else
-                warn 'Wrong user information, try to load again.'
+                warning('Wrong user information, try to load again.');
             end
         end
     end

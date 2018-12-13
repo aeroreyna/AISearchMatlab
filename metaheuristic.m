@@ -13,6 +13,7 @@ classdef metaheuristic < handle
         bestSolution = [];
         bestFitness = inf;
         worstFitness = -inf;
+        worstSolution = [];
         fitnessFunction;
         numberOfFunctionCalls = 0;
         maxNoIterations = 100;
@@ -172,9 +173,10 @@ classdef metaheuristic < handle
         end
         function updateWorst(obj)
             % update the best know so far solution and it's fitness.
-            [worstFitTemp, ~] = max(obj.fitness);
+            [worstFitTemp, bestIndex] = max(obj.fitness);
             if worstFitTemp > obj.worstFitness
                 obj.worstFitness = worstFitTemp;
+                obj.worstSolution = obj.population(bestIndex,:);
             end
         end
         
@@ -291,22 +293,22 @@ classdef metaheuristic < handle
     end
     
     methods (Access = private)
-        function logIn(obj, user , key)
+        function logIn(obj, key)
             if obj.onlineObj == 0
                 obj.onlineObj = onlineRecords();
-                obj.logIn(user , key);
+                obj.logIn(key);
             end
         end
         function uploadRecord(obj)
             if obj.onlineObj == 0
                 obj.onlineObj = onlineRecords();
             end
-            if obj.onlineObj.logged
+            if obj.onlineObj.isLogIn()
                 tempF = functions(obj.fitnessFunction);
                 obj.onlineObj.addRecord(obj.algorithmName, tempF.function, obj.bestFitness, ...
                 obj.bestSolution, obj.noDimensions, obj.maxNoIterations, obj.sizePopulation);
             else
-               warn 'You are not logged in';
+               warning('You are not logged in');
             end            
         end
     end

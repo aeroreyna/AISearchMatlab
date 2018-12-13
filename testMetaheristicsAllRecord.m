@@ -1,6 +1,7 @@
 clear, clc
 benchmarkF = {@ackley, @branins, @griewangk, @jongs, @langermann, @michalewicz, @rastrigin, @rosenbrock, @rysunek, @schwefel};
-AIs = {@DE, @PSO, @SMS, @WOA, @CS,  @HS};
+%AIs = {@DE, @PSO, @SMS, @WOA, @CS,  @HS};
+AIs = {@DA};
 
 for b = 1:size(benchmarkF,2)
     benchmarkF{b}

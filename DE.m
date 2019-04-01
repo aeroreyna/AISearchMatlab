@@ -40,8 +40,7 @@ classdef DE < metaheuristic
                                obj.population(selectedPop(5),j));
                     end
                 end
-                solutionBase(solutionBase > 1) = 1;
-                solutionBase(solutionBase < 0) = 0;
+                solutionBase = obj.checkBoundsToroidal(solutionBase);
                 tempFit = obj.evalPopulation(solutionBase);
                 if tempFit < obj.fitness(selectedPop(1))
                     if obj.plotSpecial

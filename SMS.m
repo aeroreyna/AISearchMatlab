@@ -69,7 +69,7 @@ classdef SMS < metaheuristic
             end
             
             obj.population = pobL;
-            obj.checkBounds();
+            obj.checkBoundsToroidal();
             obj.direction = dirL;
             obj.evalPopulation();
         end

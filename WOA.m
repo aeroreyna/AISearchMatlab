@@ -48,7 +48,7 @@ classdef WOA < metaheuristic
                     end
                 end
             end
-            obj.checkBounds();
+            obj.checkBoundsToroidal();
             obj.evalPopulation();
             obj.updateBest();
         end

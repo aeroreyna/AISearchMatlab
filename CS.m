@@ -31,7 +31,7 @@ classdef CS < metaheuristic
                 s = s + stepsize .* randn(size(s));
                 newPop(i,:) = s;
             end
-            newPop = obj.checkBounds(newPop);
+            newPop = obj.checkBoundsToroidal(newPop);
             obj.remplacePopulation(newPop);
             
             % A fraction of worse nests are discovered with a probability pa
@@ -41,7 +41,7 @@ classdef CS < metaheuristic
             stepsize = rand * (obj.population(randperm(obj.sizePopulation),:)-...
                                obj.population(randperm(obj.sizePopulation),:));
             newPop = obj.population + stepsize.*K;
-            newPop = obj.checkBounds(newPop);
+            newPop = obj.checkBoundsToroidal(newPop);
             obj.remplacePopulation(newPop);
         end
         

@@ -50,7 +50,7 @@ classdef PSO < metaheuristic
             end
             % update solutions
             obj.population = obj.population + obj.velocity;
-            obj.checkBounds();
+            obj.checkBoundsToroidal();
             
             % eval fitness
             obj.evalPopulation();

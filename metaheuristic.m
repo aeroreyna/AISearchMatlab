@@ -161,6 +161,17 @@ classdef metaheuristic < handle
             end
         end
         
+        function solutions = checkBoundsToroidal(obj, solutions)
+            if nargin == 1
+                solutions = obj.population;
+            end
+            solutions(solutions>1)=solutions(solutions>1)-1;
+            solutions(solutions<0)=solutions(solutions<0)+1;
+            if nargin == 1
+                obj.population = solutions;
+            end
+        end
+        
         function updateBest(obj)
             % update the best know so far solution and it's fitness.
             [bestFitTemp, bestIndex] = min(obj.fitness);

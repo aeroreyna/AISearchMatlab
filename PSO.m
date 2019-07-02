@@ -15,72 +15,74 @@ classdef PSO < metaheuristic
     end
     
     methods
-        function obj = PSO(fitnessFunction, noDimensions)
-            obj.algorithmName = 'PSO';
+        function self = PSO(fitnessFunction, noDimensions)
+            self.algorithmName = 'PSO';
             if nargin < 1
                 return 
             end
-            obj.fitnessFunction = fitnessFunction;
-            obj.noDimensions = noDimensions;
+            self.fitnessFunction = fitnessFunction;
+            self.noDimensions = noDimensions;
         end
         
-        function operators(obj)
-            if size(obj.velocity,1)==0
-                obj.velocity = zeros(obj.sizePopulation, obj.noDimensions);
+        function operators(self)
+            if size(self.velocity,1)==0
+                self.velocity = zeros(self.sizePopulation, self.noDimensions);
             end
-            if size(obj.bestPersonal)==0
-                obj.bestPersonal = [obj.fitness, obj.population];
-                obj.historicBP = zeros(obj.sizePopulation, obj.noDimensions, obj.maxNoIterations);
+            if size(self.bestPersonal)==0
+                self.bestPersonal = [self.fitness, self.population];
+                if self.plotSpecial
+                    self.historicBP = zeros(self.sizePopulation, self.noDimensions, self.maxNoIterations);
+                end
             end
             % atraction to the best personal solution
-            pbAtraction = rand(obj.sizePopulation,obj.noDimensions) .* ...
-                (obj.bestPersonal(:,2:end)-obj.population);
+            pbAtraction = rand(self.sizePopulation,self.noDimensions) .* ...
+                (self.bestPersonal(:,2:end)-self.population);
             
             % atraction to the best global solution
-            bestAtraction = rand(obj.sizePopulation,obj.noDimensions) .* ...
-                (repmat(obj.bestSolution, obj.sizePopulation, 1) - obj.population);
+            bestAtraction = rand(self.sizePopulation,self.noDimensions) .* ...
+                (repmat(self.bestSolution, self.sizePopulation, 1) - self.population);
             
             % update velocity trayectories.
-            obj.velocity = obj.velocityParam * obj.velocity + ...
-                    obj.bestPersonalParam * pbAtraction + ...
-                    obj.bestParam * bestAtraction;
+            self.velocity = self.velocityParam * self.velocity + ...
+                    self.bestPersonalParam * pbAtraction + ...
+                    self.bestParam * bestAtraction;
             
-            if obj.plotSpecial
-                oldPop = obj.population;
+            if self.plotSpecial
+                oldPop = self.population;
             end
             % update solutions
-            obj.population = obj.population + obj.velocity;
-            obj.checkBoundsToroidal();
+            self.population = self.population + self.velocity;
+            self.checkBoundsToroidal();
             
             % eval fitness
-            obj.evalPopulation();
-            tempIndx = obj.updateBestPersonal();
+            self.evalPopulation();
+            tempIndx = self.updateBestPersonal();
             
             %SpecialPlot for educational propouses
-            if obj.plotSpecial
+            if self.plotSpecial
                 if(sum(tempIndx))
-                    obj.plotSpecialF(oldPop, pbAtraction, bestAtraction, tempIndx);
+                    self.plotSpecialF(oldPop, pbAtraction, bestAtraction, tempIndx);
                     pause(0.1)
                 end
-                obj.historicBP(:,:,obj.actualIteration) = obj.bestPersonal(:,2:end);
+                self.historicBP(:,:,self.actualIteration) = self.bestPersonal(:,2:end);
             end
         end
         
-        function temp = updateBestPersonal(obj)
-            temp = obj.bestPersonal(:,1) > obj.fitness;
-            obj.bestPersonal(temp,:) = [obj.fitness(temp), ...
-                                        obj.population(temp,:)];
-            obj.improvementsCount = obj.improvementsCount + sum(temp);
+        function temp = updateBestPersonal(self)
+            temp = self.bestPersonal(:,1) > self.fitness;
+            self.bestPersonal(temp,:) = [self.fitness(temp), ...
+                                        self.population(temp,:)];
+            self.improvementsCount = self.improvementsCount + sum(temp);
         end
         
-        function plotSpecialF(obj, oldPop, pAttr, bAtrr, indx)
+        function plotSpecialF(self, oldPop, pAttr, bAtrr, indx)
             if sum(indx)
-                obj.plotSolutions(oldPop(:,:),'or');
+                self.plotSolutions(oldPop(:,:),'or');
                 hold on
-                obj.plotSolutions(obj.population(indx,:),'og');
-                plot(obj.bestSolution(1),obj.bestSolution(2),'om');
-                obj.graph2d()
-                for i=1:obj.sizePopulation
+                self.plotSolutions(self.population(indx,:),'og');
+                plot(self.bestSolution(1),self.bestSolution(2),'om');
+                self.graph2d()
+                for i=1:self.sizePopulation
                     if indx(i)
                         %PlotVectors
             hold on
@@ -88,7 +90,7 @@ classdef PSO < metaheuristic
             hold on
             vectarrow(oldPop(i,:), oldPop(i,:)+bAtrr(i,:));
             hold on
-            vectarrow(oldPop(i,:),obj.population(i,:));
+            vectarrow(oldPop(i,:),self.population(i,:));
                     end
                 end
             end

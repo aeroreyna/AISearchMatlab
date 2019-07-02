@@ -1,9 +1,8 @@
 classdef metaheuristic < handle
-    %METAHEURISTIC by aeroreyna, made with <3 & science
-    %   Detailed explanation goes here
-    % always goes to minimization
-    % consider that all the variables have a range [0-1], adjustments of
-    % this has to be done in the fitness function.
+    % Metaheursitic Algorithms by aeroreyna
+    % This implementation always considers a minimization problems
+    % and that all the variables have a range [0-1], the proper
+    % adjustments has to be done in the fitness function.
     
     properties
         sizePopulation = 30;
@@ -48,153 +47,161 @@ classdef metaheuristic < handle
     end
     
     methods (Abstract)
-        operators(obj)
+        operators(self)
     end
     
     methods
-        function obj = metaheuristic(fitnessFunction, noDimensions)
+        function self = metaheuristic(fitnessFunction, noDimensions)
             if nargin < 1
                 return 
             end
-            obj.fitnessFunction = fitnessFunction;
-            obj.noDimensions = noDimensions;
-            obj.numberOfFunctionCalls=0;
+            self.fitnessFunction = fitnessFunction;
+            self.noDimensions = noDimensions;
+            self.numberOfFunctionCalls=0;
         end
         
-        function start(obj)
-            if size(obj.fitnessFunction,1) == 0
+        function start(self)
+            if size(self.fitnessFunction,1) == 0
                 error('There is no fitness function attached to this process');
             end
-            if size(obj.population,1) == 0
-                obj.initialPopulation();
-                obj.evalPopulation();
+            if size(self.population,1) == 0
+                self.initialPopulation();
+                self.evalPopulation();
             end
-            if size(obj.fitness,1) == 0
-                obj.evalPopulation();
+            if size(self.fitness,1) == 0
+                self.evalPopulation();
             end
             
-            obj.historicBestSolution = zeros(obj.maxNoIterations, obj.noDimensions);
-            obj.historicBestFitness = zeros(obj.maxNoIterations, 1);
-            obj.updateBest();
+            self.historicBestSolution = zeros(self.maxNoIterations, self.noDimensions);
+            self.historicBestFitness = zeros(self.maxNoIterations, 1);
+            self.updateBest();
             
-            for i=1:obj.maxNoIterations
-                obj.actualIteration = i;
-                obj.operators();
-                obj.updateBest();
-                obj.historicBestSolution(i,:) = obj.bestSolution;
-                obj.historicBestFitness(i,:) = obj.bestFitness;
+            for i=1:self.maxNoIterations
+                self.actualIteration = i;
+                self.operators();
+                self.updateBest();
+                self.historicBestSolution(i,:) = self.bestSolution;
+                self.historicBestFitness(i,:) = self.bestFitness;
                 %data visualization
                 %disp(i)
-                if obj.plotEachIterationB == true
-                    if size(obj.customPlotFunction,1)~=0
-                        obj.customPlotFunction(obj);
+                if self.plotEachIterationB == true
+                    if size(self.customPlotFunction,1)~=0
+                        self.customPlotFunction(self);
                     else
-                        obj.plot();
+                        self.plot();
                     end
                 end
-                if size(obj.eachIterationFunction,1)~=0
-                    obj.eachIterationFunction(obj);
+                if size(self.eachIterationFunction,1)~=0
+                    self.eachIterationFunction(self);
                 end
             end
-            if obj.saveRecordOnline
-                obj.uploadRecord();
+            if self.saveRecordOnline
+                self.uploadRecord();
             end
         end
         
-        function initialPopulation(obj, sizePopulation, noDimensions)
+        function initialPopulation(self, sizePopulation, noDimensions)
             % Method that start a new random population, it could use the
-            % object propierties, or well assing new properties of
+            % selfect propierties, or well assing new properties of
             % population size and/or number of dimensions.
             if nargin == 1
-                sizePopulation = obj.sizePopulation;
-                noDimensions = obj.noDimensions;
+                sizePopulation = self.sizePopulation;
+                noDimensions = self.noDimensions;
             elseif nargin == 2
-                obj.sizePopulation = sizePopulation;
-                noDimensions = obj.noDimensions;
+                self.sizePopulation = sizePopulation;
+                noDimensions = self.noDimensions;
             else
-                obj.sizePopulation = sizePopulation;
-                obj.noDimensions = noDimensions;
+                self.sizePopulation = sizePopulation;
+                self.noDimensions = noDimensions;
             end
-            obj.population = rand(sizePopulation, noDimensions);
-            if size(obj.initialSolutions,1) ~= 0
-                if size(obj.initialSolutions,2) ~= obj.noDimensions || size(obj.initialSolutions,1) > obj.sizePopulation
+            self.population = rand(sizePopulation, noDimensions);
+            if size(self.initialSolutions,1) ~= 0
+                if size(self.initialSolutions,2) ~= self.noDimensions || size(self.initialSolutions,1) > self.sizePopulation
                     error('Initial custom population do not have the right dimensions');
                 end
-                obj.population(1:size(obj.initialSolutions,1),:) = obj.initialSolutions;
+                self.population(1:size(self.initialSolutions,1),:) = self.initialSolutions;
             end
         end
         
-        function fit = evalPopulation(obj, population)
+        function fit = evalPopulation(self, population)
             % This method evual the fitness of the population, or well the
             % solution pass thorught the argument. If no argument it send
             % then the fitness of all the population is store in the
-            % fitness propertie of this object.
+            % fitness propertie of this selfect.
             if nargin == 1
-                population = obj.population;
+                population = self.population;
             end
             fit = zeros(size(population,1),1);
             for i=1:size(population,1)
-                fit(i) = obj.fitnessFunction(population(i,:));
+                fit(i) = self.fitnessFunction(population(i,:));
             end
             if nargin == 1
-                obj.fitness = fit;
+                self.fitness = fit;
             end
-            obj.numberOfFunctionCalls=obj.numberOfFunctionCalls+size(population,1);
+            self.numberOfFunctionCalls=self.numberOfFunctionCalls+size(population,1);
         end
         
-        function sortPopulation(obj)
+        function rp = getShuffledPopulation(self)
+            randIndexing = randperm(self.sizePopulation);
+            rp = self.population(randIndexing, :);
+        end
+        
+        function bestArray = bestSolutionArray(self)
+            bestArray = repmat(self.bestSolution, self.sizePopulation, 1);
+        end
+        
+        function sortPopulation(self)
             % Sort the population using the fitness value, the order is
             % assendent. Sort the fitness array as well.
-            temp = sortrows([obj.fitness, obj.population], 1);
-            obj.fitness = temp(:,1);
-            obj.population = temp(:,2:end);
+            temp = sortrows([self.fitness, self.population], 1);
+            self.fitness = temp(:,1);
+            self.population = temp(:,2:end);
         end
                 
-        function solutions = checkBounds(obj, solutions)
+        function solutions = checkBounds(self, solutions)
             if nargin == 1
-                solutions = obj.population;
+                solutions = self.population;
             end
             solutions(solutions>1)=1;
             solutions(solutions<0)=0;
             if nargin == 1
-                obj.population = solutions;
+                self.population = solutions;
             end
         end
         
-        function solutions = checkBoundsToroidal(obj, solutions)
+        function solutions = checkBoundsToroidal(self, solutions)
             if nargin == 1
-                solutions = obj.population;
+                solutions = self.population;
             end
-            solutions(solutions>1)=solutions(solutions>1)-1;
-            solutions(solutions<0)=solutions(solutions<0)+1;
+            solutions = solutions - floor(solutions);
             if nargin == 1
-                obj.population = solutions;
+                self.population = solutions;
             end
         end
         
-        function updateBest(obj)
+        function updateBest(self)
             % update the best know so far solution and it's fitness.
-            [bestFitTemp, bestIndex] = min(obj.fitness);
-            if bestFitTemp < obj.bestFitness
-                obj.bestSolution = obj.population(bestIndex,:);
-                obj.bestFitness = bestFitTemp;
-                obj.bestSolutionChanges = obj.bestSolutionChanges + 1;
-                obj.bestSolutionImprovers = [obj.bestSolutionImprovers; obj.bestSolution];
+            [bestFitTemp, bestIndex] = min(self.fitness);
+            if bestFitTemp < self.bestFitness
+                self.bestSolution = self.population(bestIndex,:);
+                self.bestFitness = bestFitTemp;
+                self.bestSolutionChanges = self.bestSolutionChanges + 1;
+                self.bestSolutionImprovers = [self.bestSolutionImprovers; self.bestSolution];
             end
         end
-        function updateWorst(obj)
+        function updateWorst(self)
             % update the best know so far solution and it's fitness.
-            [worstFitTemp, bestIndex] = max(obj.fitness);
-            if worstFitTemp > obj.worstFitness
-                obj.worstFitness = worstFitTemp;
-                obj.worstSolution = obj.population(bestIndex,:);
+            [worstFitTemp, bestIndex] = max(self.fitness);
+            if worstFitTemp > self.worstFitness
+                self.worstFitness = worstFitTemp;
+                self.worstSolution = self.population(bestIndex,:);
             end
         end
         
-        function r = diversity(obj, solutions)
+        function r = diversity(self, solutions)
             %Function that messure the diversity of the population.
             if nargin == 1
-                solutions = obj.population;
+                solutions = self.population;
             end
             n = size(solutions,1);
             r = 0;
@@ -206,32 +213,32 @@ classdef metaheuristic < handle
             r = 2 * r / (n*(n-1));
         end
         
-        function plot(obj)
-            if obj.plotHistoricB == true
-                if size(obj.handleHistoricPlot,1) == 0
-                    obj.handleHistoricPlot = figure;
+        function plot(self)
+            if self.plotHistoricB == true
+                if size(self.handleHistoricPlot,1) == 0
+                    self.handleHistoricPlot = figure;
                 end
-                figure(obj.handleHistoricPlot.Number);
+                figure(self.handleHistoricPlot.Number);
                 hold off
-                plot(1:obj.actualIteration, obj.historicBestFitness(1:obj.actualIteration));
+                plot(1:self.actualIteration, self.historicBestFitness(1:self.actualIteration));
             end
-            if obj.plotPopulationB == true
-                if size(obj.handlePopulationPlot,1) == 0
-                    obj.handlePopulationPlot = figure;
+            if self.plotPopulationB == true
+                if size(self.handlePopulationPlot,1) == 0
+                    self.handlePopulationPlot = figure;
                 end
-                figure(obj.handlePopulationPlot.Number);
+                figure(self.handlePopulationPlot.Number);
                 hold off
-                obj.graph2d()
+                self.graph2d()
                 hold on
-                obj.plotSolutions(obj.population);
+                self.plotSolutions(self.population);
             end
-            if obj.plotBestSolutionB == true
-                if size(obj.handlePopulationPlot,1) == 0
-                    obj.handlePopulationPlot = figure;
-                    obj.graph2d()
+            if self.plotBestSolutionB == true
+                if size(self.handlePopulationPlot,1) == 0
+                    self.handlePopulationPlot = figure;
+                    self.graph2d()
                     hold on
                 end
-                obj.plotSolutions(obj.bestSolution,'or');
+                self.plotSolutions(self.bestSolution,'or');
             end
             drawnow
         end
@@ -249,8 +256,8 @@ classdef metaheuristic < handle
             plot(solutions(:,1),solutions(:,2),properties);
         end
         
-        function [X,Y,Z] = getGraphData(obj, fitnessFunc)
-            if size(obj.X,1) == 0 || size(obj.Y,1) == 0 || size(obj.Z,1) == 0
+        function [X,Y,Z] = getGraphData(self, fitnessFunc)
+            if size(self.X,1) == 0 || size(self.Y,1) == 0 || size(self.Z,1) == 0
                 x=0:1/100:1;
                 y=x;
                 [X,Y]=meshgrid(x,y);
@@ -261,63 +268,63 @@ classdef metaheuristic < handle
                         Z(h,l)=fitnessFunc([X(h,l),Y(h,l)]);
                     end
                 end
-                obj.X = X;
-                obj.Y = Y;
-                obj.Z = Z;
+                self.X = X;
+                self.Y = Y;
+                self.Z = Z;
             else
-                X = obj.X;
-                Y = obj.Y;
-                Z = obj.Z;
+                X = self.X;
+                Y = self.Y;
+                Z = self.Z;
             end
         end
         
-        function graph3d(obj,fitnessFunc)
+        function graph3d(self,fitnessFunc)
             if nargin == 1
-                if size(obj.fitnessFunction,1) == 0
+                if size(self.fitnessFunction,1) == 0
                     error('Fitness function is empty');
                 end
-                fitnessFunc = obj.fitnessFunction;
+                fitnessFunc = self.fitnessFunction;
             end
-            [x,y,z] = obj.getGraphData(fitnessFunc);
+            [x,y,z] = self.getGraphData(fitnessFunc);
             mesh(x,y,z);
         end
         
-        function graph2d(obj,fitnessFunc)
+        function graph2d(self,fitnessFunc)
             if nargin == 1
-                if size(obj.fitnessFunction,1) == 0
+                if size(self.fitnessFunction,1) == 0
                     error('Fitness function is empty');
                 end
-                fitnessFunc = obj.fitnessFunction;
+                fitnessFunc = self.fitnessFunction;
             end
-            [x,y,z] = obj.getGraphData(fitnessFunc);
+            [x,y,z] = self.getGraphData(fitnessFunc);
             contour(x,y,z,4);
         end
         
-        function plotHistoricSolutions(obj)
+        function plotHistoricSolutions(self)
             figure
-            obj.graph2d();
+            self.graph2d();
             hold on;
-            obj.plotSolutions(obj.historicBestSolution)
-            obj.plotSolutions(obj.historicBestSolution, '')
+            self.plotSolutions(self.historicBestSolution)
+            self.plotSolutions(self.historicBestSolution, '')
         end
 
     end
     
     methods (Access = private)
-        function logIn(obj, key)
-            if obj.onlineObj == 0
-                obj.onlineObj = onlineRecords();
-                obj.logIn(key);
+        function logIn(self, key)
+            if self.onlineObj == 0
+                self.onlineObj = onlineRecords();
+                self.logIn(key);
             end
         end
-        function uploadRecord(obj)
-            if obj.onlineObj == 0
-                obj.onlineObj = onlineRecords();
+        function uploadRecord(self)
+            if self.onlineObj == 0
+                self.onlineObj = onlineRecords();
             end
-            if obj.onlineObj.isLogIn()
-                tempF = functions(obj.fitnessFunction);
-                obj.onlineObj.addRecord(obj.algorithmName, tempF.function, obj.bestFitness, ...
-                obj.bestSolution, obj.noDimensions, obj.maxNoIterations, obj.sizePopulation);
+            if self.onlineObj.isLogIn()
+                tempF = functions(self.fitnessFunction);
+                self.onlineObj.addRecord(self.algorithmName, tempF.function, self.bestFitness, ...
+                self.bestSolution, self.noDimensions, self.maxNoIterations, self.sizePopulation);
             else
                warning('You are not logged in');
             end            

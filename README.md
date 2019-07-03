@@ -7,10 +7,13 @@ The main idea of this toolbox is to accelerate the learning curve for this algor
 
 ## Installation
 
-  #. Clone this repo using git.
-    `git clone `
-  #. Add the folder and subfolders to the Matlab Path.
-  #. Execute one of the examples in the Example folder.
+  1. Clone this repo using git.
+
+```sh
+  git clone https://github.com/aeroreyna/AISearchMatlab.git
+```
+  2. Add the folder and subfolders to the Matlab Path.
+  3. Execute one of the examples in the Example folder.
 
 ## List of Algorithms in the toolbox.
 
@@ -18,8 +21,8 @@ So far this is the list of metaheuristic algorithms to implement:
 
 - [X] Genetic Algorithm (GA)
 - [X] Differential Evolution (DE)
-- [X] Harmony Search (HS)
-- [X] Particle Swarm Optimization (PSO)
+- [X] [Harmony Search (HS)](Notes/HS.md)
+- [X] [Particle Swarm Optimization (PSO)](Notes/PSO.md)
 - [X] Cuckoo Search (CS)
 - [X] States of Matter Search (SMS)
 - [X] Whale Optimization Algorithm (WOA)

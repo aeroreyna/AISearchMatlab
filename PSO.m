@@ -5,9 +5,9 @@ classdef PSO < metaheuristic
     properties
         velocity = []
         bestPersonal = []  % [fitness, solutions]
-        velocityParam = 0.97;
-        bestPersonalParam = 0.4;
-        bestParam = 0.5;
+        velocityParam = 0.4;
+        bestPersonalParam = 2;
+        bestParam = 2;
         
         %Analysis
         plotSpecial = 0;

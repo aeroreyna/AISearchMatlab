@@ -36,7 +36,7 @@ function [y, x] = cuadraticFunction(x)
   x = x * (10 * 2) - 10; % x * (High - Low) + (Low)
   N = size(x,1);
   y = zeros(N, 1);
-  for i = 1:N
+  for i = 1:N %for each solution
     y[i] = sum(x[i,:].^2, 2);
   end
 end

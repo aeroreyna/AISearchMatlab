@@ -6,7 +6,7 @@ addpath('realBenchmarkProblems')
 %AIs = {@DE, @PSO, @SMS, @WOA, @CS,  @HS};
 
 tic
-AISearch = DE(@schwefel,30);
+AISearch = PSO(@schwefel,10);
 AISearch.sizePopulation = 10000;
 AISearch.maxNoIterations = 1000;
 %AISearch.graph2d();
@@ -22,7 +22,7 @@ toc
 AISearch.plot()
 
 tic
-AISearch = DE_GPU(@schwefel,30);
+AISearch = PSO_GPU(@schwefel,10);
 AISearch.sizePopulation = 10000;
 AISearch.maxNoIterations = 1000;
 %AISearch.graph2d();

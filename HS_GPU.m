@@ -3,7 +3,8 @@ classdef HS_GPU < metaheuristic_gpu
     %   Detailed explanation goes here
     
     properties
-        newMelodyRate = 0.3;
+        %Default Parameters [0.9, 0.5, 0.01] 10.1016/j.protcy.2012.10.032
+        newMelodyRate = 0.9;
         pitchAdjustRate = 0.5;
         stepAdjust = 0.01;
     end

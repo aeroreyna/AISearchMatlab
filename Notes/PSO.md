@@ -46,6 +46,8 @@ The algorithm converge when all the solutions have a best personal solution betw
 In this case, due to the lack of stronger random exploration methods, further iterations will only perform exploitation over the converged area.
 This behavior can be seen in the resulting plots of the [Example 1](../Examples/SimplePSO.m), when a small velocity weight is chosen `pso.velocityParam = 0.1;`.
 
+![](../Examples/PSO_evolution.gif){width=50%}
+
 ## Known Disadvantages
 
 PSO is kwon to converge prematurely, which implies that it is likely to get trap on local optimal.

@@ -60,7 +60,7 @@ classdef metaheuristic < handle
             self.numberOfFunctionCalls=0;
         end
         
-        function start(self)
+        function bestSolution = start(self)
             if size(self.fitnessFunction,1) == 0
                 error('There is no fitness function attached to this process');
             end
@@ -95,9 +95,8 @@ classdef metaheuristic < handle
                     self.eachIterationFunction(self);
                 end
             end
-            if self.saveRecordOnline
-                self.uploadRecord();
-            end
+            %Returns the best solution with proper scale by the FitnessF.
+            [~, bestSolution] = self.fitnessFunction(self.bestSolution);
         end
         
         function initialPopulation(self, sizePopulation, noDimensions)
@@ -131,10 +130,11 @@ classdef metaheuristic < handle
             if nargin == 1
                 population = self.population;
             end
-            fit = zeros(size(population,1),1);
-            for i=1:size(population,1)
-                fit(i) = self.fitnessFunction(population(i,:));
-            end
+%             fit = zeros(size(population,1),1);
+%             for i=1:size(population,1)
+%                 fit(i) = self.fitnessFunction(population(i,:));
+%             end
+            fit = self.fitnessFunction(population);
             if nargin == 1
                 self.fitness = fit;
             end
@@ -308,28 +308,6 @@ classdef metaheuristic < handle
             self.plotSolutions(self.historicBestSolution, '')
         end
 
-    end
-    
-    methods (Access = private)
-        function logIn(self, key)
-            if self.onlineObj == 0
-                self.onlineObj = onlineRecords();
-                self.logIn(key);
-            end
-        end
-        function uploadRecord(self)
-            if self.onlineObj == 0
-                self.onlineObj = onlineRecords();
-            end
-            if self.onlineObj.isLogIn()
-                tempF = functions(self.fitnessFunction);
-                self.onlineObj.addRecord(self.algorithmName, tempF.function, self.bestFitness, ...
-                self.bestSolution, self.noDimensions, self.maxNoIterations, self.sizePopulation);
-            else
-               warning('You are not logged in');
-            end            
-        end
-    end
-    
+    end    
 end
 

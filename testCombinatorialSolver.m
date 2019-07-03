@@ -1,4 +1,7 @@
 clear, clc
+
+addpath('combinatorialProblems')
+
 NoItems = 300;
 range = 50;
 maxW = range / 10 * NoItems ;

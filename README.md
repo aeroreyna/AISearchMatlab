@@ -1,17 +1,16 @@
 # AISearchMatlab
 AISearch Library for Matlab
 
-This is a open source toolbox to **implement**, **test**, **learn** and **compare** metaheuristic algorithms.
+This is a open source toolbox with the aim of **implement**, **test**, **learn** and **compare** metaheuristic algorithms.
 
-The main idea of this toolbox is to accelerate the learning curve for this algorithms, by offering a clean and reusable code. We would like that this toolbox is accesible to new applications even for people with low or none knowlage of this techniques.
+The main idea of this toolbox is to accelerate the learning curve for this algorithms, by offering a clean and reusable code. We would like that this toolbox is accesible to new applications even for people with low or none knowledge of these techniques.
 
-## Instalation
+## Installation
 
-1. Download this git. [Link](https://github.com/aeroreyna/AISearchMatlab/archive/master.zip)
-2. Unzip the folder.
-3. Add the folder and subfolders to the MatLab Path.
-4. Execute one of the examples.
-5. Enjoy the metaheuristics.
+  #. Clone this repo using git.
+    `git clone `
+  #. Add the folder and subfolders to the Matlab Path.
+  #. Execute one of the examples in the Example folder.
 
 ## List of Algorithms in the toolbox.
 
@@ -29,20 +28,32 @@ So far this is the list of metaheuristic algorithms to implement:
 - [ ] Firefly Algorithm (FA)
 - [ ] Social Spider Optimization (SSO)
 
-An extensive list of this algorithms can be found at this Github Page: [AISearch](https://aisearch.github.io/#/)
+An extensive list of this algorithms can be found at the [AISearch GitHub page](https://aisearch.github.io/#/).
 
 ## Usage
 
-To implement this algorithms over new problems it's really easy. The initialization ask you for the fitness fucntion and the number of dimensions of the problem. Then you can modify the parameters you need. (Documentation pending). Finally start the algorith with the method start().
+Using these algorithms over new problems it's a easy task.
+It only requires a proper fitness function and the number of dimensions of the problem.
+Then one can execute the algorithm with the method start() which returns the best set of parameters founded.
 
 
 ```matlab
-anyVariableName = DE(@fitnessFunction, 2);
-anyVariableName.start();
-anyVariableName.bestSolution
-anyVariableName.bestFitness
+D = 2; %Dimensionality = No. Variables to Optimize
+de = DE(@schwefel, D);
+solution = de.start(); %Executes the algorithm optimization
+
+function [ r, x ] = schwefel( vector )
+  x = vector * 1000 - 500;
+  m = size(vector, 2); %dimensions
+  r= 418.9829 * m + sum(-x .* sin(sqrt(abs(x))), 2);
+end
+
 ```
+
+Other parameters of these algorithm can be modify before their execution, such as the population size `sizePopulation` and the number of iterations `maxNoIterations`, which have a default value of 30 and 100 per default respectively.
 
 ## Examples
 
-The examples provided are easily configurable to use the algorithm of your choice. Feel free to test them out, and change them as will. We highly recomend to inspect the code of them to understand better their ways.
+The examples provided are can be easily modified to use any of the algorithms included or your own.
+Feel free to test them out, and change them as will.
+It is highly recommendable to inspect the code to understand better their functionality.

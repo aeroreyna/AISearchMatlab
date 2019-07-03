@@ -6,7 +6,7 @@ classdef metaheuristic_gpu < metaheuristic
     
     methods
         
-        function start(self)
+        function bestSolution = start(self)
             if size(self.fitnessFunction,1) == 0
                 error('There is no fitness function attached to this process');
             end
@@ -39,9 +39,8 @@ classdef metaheuristic_gpu < metaheuristic
                     self.eachIterationFunction(self);
                 end
             end
-            if self.saveRecordOnline
-                self.uploadRecord();
-            end
+            %Returns the best solution with proper scale by the FitnessF.
+            [~, bestSolution] = self.fitnessFunction(self.bestSolution);
         end
         
         function initialPopulation(self, sizePopulation, noDimensions)

@@ -18,6 +18,7 @@ classdef metaheuristic < handle
         maxNoIterations = 100;
         actualIteration = 0;
         initialSolutions = [];
+        stripFitnessCalls = false;
     end
     
     %this properties are for data visualization
@@ -130,11 +131,14 @@ classdef metaheuristic < handle
             if nargin == 1
                 population = self.population;
             end
-%             fit = zeros(size(population,1),1);
-%             for i=1:size(population,1)
-%                 fit(i) = self.fitnessFunction(population(i,:));
-%             end
-            fit = self.fitnessFunction(population);
+            if self.stripFitnessCalls
+                fit = zeros(size(population,1),1);
+                for i=1:size(population,1)
+                    fit(i) = self.fitnessFunction(population(i,:));
+                end
+            else
+                fit = self.fitnessFunction(population);
+            end
             if nargin == 1
                 self.fitness = fit;
             end

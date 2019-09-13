@@ -7,9 +7,6 @@ function r = channelAllocationFF(net)
     net.cells_users = {net.cell_association{net.cells_active}};
     firstUserCell = cellfun(@(v)v(1), net.cells_users);
     
-    firstUserCell_GPU = gpuArray(firstUserCell);
-    firstUserCell_GPU = repmat(firstUserCell_GPU', 1, net.NoChs);
-    
     function fitness = fitnessFunction(usersCapacity)
         %fitness = -sum(usersCapacity) / (1 + sum(net.users_r > usersCapacity));
         fitness = -sum(usersCapacity);
@@ -29,7 +26,7 @@ function r = channelAllocationFF(net)
     end
     function [fitness, cells_capacity_i] = bigMatrixFF(cell_ch)
         active_Q = size(net.cells_users,2);
-        dummies = ~cell_ch .* repmat(firstUserCell_GPU', 1, net.NoChs);
+        dummies = ~cell_ch .* repmat(firstUserCell', 1, net.NoChs);
         notDummies = reshape(~dummies, active_Q,1,[]);
         notDummies2 = permute(notDummies, [2,1,3]);
         all_selected_users = (dummies + cell_ch);
@@ -109,13 +106,11 @@ function r = channelAllocationFF(net)
             end
         end
         %evaluate
-        tic
-        [fitness, usersCapacity] = bigMatrixFF(cell_ch);
-        fitness
-        toc
-        tic
+        %tic
+        %[fitness, usersCapacity] = bigMatrixFF(cell_ch);
+        %toc
+        %tic
         [fitness, usersCapacity] = matrixFF(X);
-        fitness
-        toc
+        %toc
     end
 end

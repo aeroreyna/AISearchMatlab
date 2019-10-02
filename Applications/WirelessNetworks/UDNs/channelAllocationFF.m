@@ -14,13 +14,13 @@ function r = channelAllocationFF(net)
     function [fitness, C] = matrixFF(x)
         C = zeros(size(x,1), 1);
         for n=1:size(x,2) 
-          usersInx = x(:,n) == 1; %list of users using channel n
-          cellsInx = net.association(usersInx); %cells attending these users
+          usersInx = x(:,n) == 1; % users using channel n
+          cellsInx = net.association(usersInx); % cells associated to these users
           signalsRx      = net.signal_user_cell(usersInx, cellsInx); %max size of QxQ
-          DessiredSingal = diag(signalsRx)';
-          Interference   = sum(signalsRx, 1) - DessiredSingal;
+          DesiredSignal = diag(signalsRx)';
+          Interference   = sum(signalsRx, 1) - DesiredSignal;
           C(usersInx)    = C(usersInx)' + net.Ch_b *...
-                           log2(1 + DessiredSingal ./ (net.Noise + Interference));
+                           log2(1 + DesiredSignal ./ (net.Noise + Interference));
         end
         fitness = fitnessFunction(C);
     end
@@ -105,12 +105,6 @@ function r = channelAllocationFF(net)
                 X(users(i), chs) = 1;
             end
         end
-        %evaluate
-        %tic
-        %[fitness, usersCapacity] = bigMatrixFF(cell_ch);
-        %toc
-        %tic
         [fitness, usersCapacity] = matrixFF(X);
-        %toc
     end
 end

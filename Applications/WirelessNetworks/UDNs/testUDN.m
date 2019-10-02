@@ -1,4 +1,4 @@
-rng(10)
+%rng(10)
 %% Base Network Instance
 net = defaultUDN(); % Network and problem Parameters 
 net = initUDN(net); % Cells and Users positions, and SNR Calculation
@@ -19,7 +19,7 @@ a = [];
 best = -inf;
 bestx = [];
 tic
-for i=1:10000
+for i=1:1000
     x = rand(size(net.cells_active,1),1);
     c = -ffs.CBA(x);
     if(c > best)
@@ -35,7 +35,7 @@ hist(uc, 100)
 
 tic
 AISearch = SMS(@ffs.CBA, size(net.cells_active,1));
-AISearch.sizePopulation = 100;
+AISearch.sizePopulation = 10;
 AISearch.maxNoIterations = 100;
 AISearch.stripFitnessCalls = true;
 AISearch.start();
